@@ -1,6 +1,6 @@
 import { promises as fs } from 'fs';
 
-export class FileStorage {
+export class ArmazenamentoArquivo {
   static async load<T>(path: string): Promise<T> {
     try {
       const content = await fs.readFile(path, 'utf-8');
