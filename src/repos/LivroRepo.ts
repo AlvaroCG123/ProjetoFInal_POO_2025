@@ -42,11 +42,11 @@ export class LivroRepo {
   update(id: string, fields: Partial<{titulo:string;autor:string;codigo:string;ano:number;disponivel:boolean}>) {
     const l = this.livros.find(x => x.id === id);
     if (!l) return false;
-    if (fields.titulo !== undefined) (l as any).titulo = fields.titulo;
-    if (fields.autor !== undefined) (l as any).autor = fields.autor;
-    if (fields.codigo !== undefined) (l as any).codigo = fields.codigo;
-    if (fields.ano !== undefined) (l as any).ano = fields.ano;
-    if (fields.disponivel !== undefined) (l as any).disponivel = fields.disponivel;
+    if (fields.titulo !== undefined) l.titulo = fields.titulo;
+    if (fields.autor !== undefined) l.autor = fields.autor;
+    if (fields.codigo !== undefined) l.codigo = fields.codigo;
+    if (fields.ano !== undefined) l.ano = fields.ano;
+    if (fields.disponivel !== undefined) l.disponivel = fields.disponivel;
     return true;
   }
 

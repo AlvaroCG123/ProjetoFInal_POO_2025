@@ -44,5 +44,5 @@ export class EmprestimoRepo {
 
   findById(id: string) { return this.emprestimos.find(x => x.id === id); }
 
-  listActive() { return this.emprestimos.filter(l => (l as any).status === 'ativo' || (l as any).status === 'active'); }
+  listActive() { return this.emprestimos.filter(l => l.status === 'ativo'); }
 }
