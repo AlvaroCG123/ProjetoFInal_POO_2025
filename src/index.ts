@@ -7,9 +7,9 @@ import { MembroRepo } from './repos/MembroRepo';
 import { EmprestimoRepo } from './repos/EmprestimoRepo';
 
 const dataDir = './data';
-const bookRepo = new LivroRepo(`${dataDir}/books.json`);
-const memberRepo = new MembroRepo(`${dataDir}/members.json`);
-const loanRepo = new EmprestimoRepo(`${dataDir}/loans.json`);
+const bookRepo = new LivroRepo(`${dataDir}/livros.json`);
+const memberRepo = new MembroRepo(`${dataDir}/membros.json`);
+const loanRepo = new EmprestimoRepo(`${dataDir}/emprestimos.json`);
 
 function nextId(prefix = ''): string {
   return prefix + Date.now().toString(36) + Math.floor(Math.random() * 1000).toString(36);
@@ -39,9 +39,9 @@ async function manageBooks() {
     console.log('0) Voltar');
     const opt = readline.question('Escolha: ');
     if (opt === '1') {
-      const titulo = readline.question('Título: ');
+      const titulo = readline.question('Titulo: ');
       const autor = readline.question('Autor: ');
-      const codigo = readline.question('Código: ');
+      const codigo = readline.question('Codigo: ');
       const ano = parseInt(readline.question('Ano: '), 10) || 0;
       const livro = new Livro(nextId('b-'), titulo, autor, codigo, ano);
       bookRepo.add(livro);
@@ -55,17 +55,17 @@ async function manageBooks() {
     } else if (opt === '3') {
       const id = readline.question('ID do livro: ');
       const l = bookRepo.findById(id);
-      if (!l) { console.log('Livro não encontrado.'); pause(); continue; }
-      const titulo = readline.question(`Título (${(l as any).titulo}): `) || (l as any).titulo;
+      if (!l) { console.log('Livro nao encontrado.'); pause(); continue; }
+      const titulo = readline.question(`Titulo (${(l as any).titulo}): `) || (l as any).titulo;
       const autor = readline.question(`Autor (${(l as any).autor}): `) || (l as any).autor;
-      const codigo = readline.question(`Código (${(l as any).codigo}): `) || (l as any).codigo;
+      const codigo = readline.question(`Codigo (${(l as any).codigo}): `) || (l as any).codigo;
       const ano = parseInt(readline.question(`Ano (${(l as any).ano}): `) || `${(l as any).ano}`, 10) || (l as any).ano;
       bookRepo.update(id, { titulo, autor, codigo, ano });
       await bookRepo.save();
       console.log('Atualizado.'); pause();
     } else if (opt === '4') {
       const id = readline.question('ID do livro: ');
-      if (bookRepo.remove(id)) { await bookRepo.save(); console.log('Removido.'); } else console.log('ID não encontrado.');
+      if (bookRepo.remove(id)) { await bookRepo.save(); console.log('Removido.'); } else console.log('ID nao encontrado.');
       pause();
     } else break;
   }
@@ -82,9 +82,9 @@ async function manageMembers() {
     const opt = readline.question('Escolha: ');
     if (opt === '1') {
       const nome = readline.question('Nome: ');
-      const endereco = readline.question('Endereço: ');
+      const endereco = readline.question('Endereco: ');
       const telefone = readline.question('Telefone: ');
-      const matricula = readline.question('Número de matrícula: ');
+      const matricula = readline.question('Numero de matricula: ');
       const membro = new Membro(nextId('m-'), nome, endereco, telefone, matricula);
       memberRepo.add(membro);
       await memberRepo.save();
@@ -105,7 +105,7 @@ async function manageMembers() {
       console.log('Atualizado.'); pause();
     } else if (opt === '4') {
       const id = readline.question('ID do membro: ');
-      if (memberRepo.remove(id)) { await memberRepo.save(); console.log('Removido.'); } else console.log('ID não encontrado.');
+      if (memberRepo.remove(id)) { await memberRepo.save(); console.log('Removido.'); } else console.log('ID nao encontrado.');
       pause();
     } else break;
   }
@@ -113,21 +113,21 @@ async function manageMembers() {
 
 async function manageLoans() {
   while (true) {
-    console.log('\n== Empréstimos ==');
-    console.log('1) Realizar empréstimo');
-    console.log('2) Listar empréstimos ativos');
-    console.log('3) Registrar devolução');
-    console.log('4) Histórico de empréstimos');
+    console.log('\n== Emprestimos ==');
+    console.log('1) Realizar emprestimo');
+    console.log('2) Listar emprestimos ativos');
+    console.log('3) Registrar devolucao');
+    console.log('4) Historico de emprestimos');
     console.log('0) Voltar');
     const opt = readline.question('Escolha: ');
     if (opt === '1') {
       const livroId = readline.question('ID do livro: ');
       const livro = bookRepo.findById(livroId);
-      if (!livro) { console.log('Livro não encontrado.'); pause(); continue; }
-      if (!(livro as any).disponivel) { console.log('Livro não disponível.'); pause(); continue; }
+      if (!livro) { console.log('Livro nao encontrado.'); pause(); continue; }
+      if (!(livro as any).disponivel) { console.log('Livro nao disponivel.'); pause(); continue; }
       const membroId = readline.question('ID do membro: ');
       const membro = memberRepo.findById(membroId);
-      if (!membro) { console.log('Membro não encontrado.'); pause(); continue; }
+      if (!membro) { console.log('Membro nao encontrado.'); pause(); continue; }
       const dataEmprestimo = new Date().toISOString();
       const due = new Date(); due.setDate(due.getDate() + 14);
       const dataDevolucao = due.toISOString();
@@ -136,15 +136,15 @@ async function manageLoans() {
       (livro as any).disponivel = false;
       await loanRepo.save();
       await bookRepo.save();
-      console.log('Empréstimo registrado.'); pause();
+      console.log('Emprestimo registrado.'); pause();
     } else if (opt === '2') {
-      console.log('\nEmpréstimos ativos:');
+      console.log('\nEmprestimos ativos:');
       loanRepo.listActive().forEach(l => console.log(l.toString())); pause();
     } else if (opt === '3') {
-      const id = readline.question('ID do empréstimo: ');
+      const id = readline.question('ID do emprestimo: ');
       const e = loanRepo.findById(id);
-      if (!e) { console.log('Empréstimo não encontrado.'); pause(); continue; }
-      if ((e as any).status === 'devolvido' || (e as any).status === 'returned') { console.log('Já devolvido.'); pause(); continue; }
+      if (!e) { console.log('Emprestimo não encontrado.'); pause(); continue; }
+      if ((e as any).status === 'devolvido' || (e as any).status === 'returned') { console.log('Ja devolvido.'); pause(); continue; }
       const dataRetorno = new Date().toISOString();
       (e as any).registrarDevolucao(dataRetorno);
       const livro = bookRepo.findById((e as any).livroId);
@@ -166,7 +166,7 @@ async function main() {
     console.log('\n=== Menu Principal ===');
     console.log('1) Cadastro de Livros');
     console.log('2) Cadastro de Membros');
-    console.log('3) Empréstimos');
+    console.log('3) Emprestimos');
     console.log('0) Sair');
     const opt = readline.question('Escolha: ');
     if (opt === '1') await manageBooks();
